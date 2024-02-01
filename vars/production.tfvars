@@ -20,4 +20,12 @@ ssh_public_key     = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDrt/GYkYpuQYRxM3lgjO
 # ACR
 acr_name = "devopsjourney"
 
+# App Insights
+app_insights_name = "devopsjourney"
+application_type  = "web"
+
+# Key vault
+keyvault_name = "devopsjourney"
+access_policy_id  = "7da738c2-5c92-401c-87f1-eadbcf714367"
+
 environment = "production"
