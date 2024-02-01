@@ -142,6 +142,37 @@ stages :
           containerRegistry: ${{ variables.containerRegistry }}
           tags: 'latest '
 
+  - stage: inspec_tests
+    displayName: Inspec Testing
+    jobs:
+      - job: "Checkout"
+        steps:
+          - task: UseRubyVersion@0
+            displayName: 'Install Ruby'
+            inputs:
+              versionSpec: '>= 2.5'
+              addToPath: true
+
+          - script: gem install inspec-bin
+            displayName: 'Install inspec-bin'
+
+          - task: Bash@3
+            displayName: 'Run inspec tests'
+            inputs:
+              targetType: inline
+              script: |
+                export AZURE_SUBSCRIPTION_ID="$(AZURESUBSCRIPTIONID)"
+                export AZURE_CLIENT_ID="$(AZURECLIENTID)"
+                export AZURE_CLIENT_SECRET="$(AZURECLIENTSECRET)"
+                export AZURE_TENANT_ID="$(AZURETENANTID)"
+                inspec exec ./azure-inspec-tests/ -t azure:// --chef-license=accept --reporter cli junit:inspectestresults.xml
+          - task: PublishTestResults@2
+            displayName: Publish inspec test results
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFiles: '**/inspectestresults.xml'
+              mergeTestResults: true
+
   - stage: aks_deploy
     displayName: Deploy aspnet app to AKS
     jobs:  
